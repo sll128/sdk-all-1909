@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.sdk.core.dao.OnlineUserDAO">
+    <insert id="addOnlineUser" parameterType="OnlineUser">
+      insert into  sdk_online.online_user (TICKET, USER_ID, LOGIN_ACCOUNT,  LOGIN_DATE, LAST_ACT,GAME_ID)
+            VALUES (#{ticket},#{userId},#{loginAccount},#{loginDate},#{lastAct},#{gameId})
+    </insert>
+
+    <update id="updateLastAct" >
+        update sdk_online.online_user set LAST_ACT=#{time} where ticket=#{ticket}
+    </update>
+
+    <delete id="deleteOnlineUser">
+        DELETE  from sdk_online.online_user where USER_ID=#{userId}
+    </delete>
+</mapper>
+    

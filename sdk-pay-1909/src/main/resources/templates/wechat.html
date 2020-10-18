@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="wechat.html" method="post">
+    金额<input name="amount"/>
+    <input type="submit" value="提交"/>
+</form>
+<input type="hidden" id="orderNum" th:value="${orderNum}">
+<img th:src="${'code.html?code='+code_url}">
+<script type="text/javascript">
+    var ws;
+    window.onload=function(){
+        if("WebSocket" in window){
+            ws=new WebSocket("ws://localhost:8080/call/"+document.getElementById("orderNum").value);
+            ws.onmessage=function (e) {
+                var message=e.data;//data就是服务端推送过来的数据
+                alert("服务端说："+message)
+            }
+        }else{
+            alert("不支持")
+        }
+    }
+</script>
+</body>
+</html>

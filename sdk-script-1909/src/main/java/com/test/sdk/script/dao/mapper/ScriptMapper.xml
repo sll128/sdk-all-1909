@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.sdk.script.dao.ScriptDAO">
+    <select id="getScriptsList" parameterType="int" resultType="Scripts">
+        select id,status,cron,name,last_exec_time lastExecTime ,job_class jobClass,result from test.scripts
+        <where>
+            <if test="_parameter!=null">status=#{status}</if>
+        </where>
+    </select>
+
+    <update id="updateScripts" parameterType="Scripts">
+        update test.scripts
+        <set>
+            <if test="lastExecTime!=null">last_exec_time=#{lastExecTime},</if>
+            <if test="result!=null">result=#{result},</if>
+            <if test="status!=null">status=#{status},</if>
+            <if test="name!=null and name!=''">name=#{name},</if>
+            <if test="cron!=null and cron!=''">cron=#{cron},</if>
+        </set>
+        where ID=#{id}
+    </update>
+
+    <select id="getScriptById" parameterType="int" resultType="Scripts">
+       select id, job_class jobClass from test.scripts where id=#{id}
+    </select>
+</mapper>
+    

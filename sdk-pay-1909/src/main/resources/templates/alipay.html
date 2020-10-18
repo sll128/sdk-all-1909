@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:text="${session.aaa}"></div>
+<form action="/alipay.html" method="post">
+    金额<input name="amount"/>
+    <input type="submit" value="提交"/>
+</form>
+</body>
+</html>

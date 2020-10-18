@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.sdk.script.dao.OnlineUserCntDAO">
+<insert id="addOnlineUserCnt" parameterType="OnlineUserCount">
+    insert into sdk_log.online_user_cnt(GAME_ID, CNT,CREATED_DATE)
+            VALUES (#{gameId},#{cnt},#{createdDate})
+</insert>
+
+</mapper>
+    

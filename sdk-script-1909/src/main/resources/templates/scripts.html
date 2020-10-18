@@ -1,0 +1,148 @@
+<table id="test" lay-filter="test"></table>
+<script type="text/html" id="head-bar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="multi-delete"><i class="layui-icon">&#xe640;</i> 批量删除</button>
+    </div>
+</script>
+<script type="text/html" id="row-bar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{#  if(d.status==0){    }}
+       <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="start">开启</a>
+    {{#   }     }}
+</script>
+<script th:inline="none">
+    //声明使用table控件
+    layui.use(['table','form'], function(){
+        var table = layui.table;//table控件的对象
+        var form=layui.form;
+        //render方法是用来初始化对象的
+        table.render({
+            id:"test",
+            elem: '#test'//id=demo的对象
+            ,url: '/list' //数据接口
+            ,toolbar:'#head-bar'
+            //,page: true //开启分页
+            ,cols: [[ //列 field的值，和json数据中的属性是一样的
+                {type: 'checkbox', fixed: 'left'}
+               , {field: 'id', title: 'ID', width:80, sort: true}
+                ,{field: 'name', title: '脚本名'}
+                ,{field: 'cron', title: '表达式',width:120}
+                ,{field: 'jobClass', title: '类名',width:120}
+                ,{field: 'lastExecTime', title: '最后执行时间'}
+                ,{field: 'result', title: '执行结果'}
+                ,{field: 'status', title: '状态',templet: function(d){//参数d是当前这一行的数据
+                    if(d.status==1){
+                        return '<span class="layui-badge layui-bg-green">运行中</span>'
+                    }else{
+                        return '<span class="layui-badge layui-bg-orange">停止</span>'
+                    }
+                }}
+                ,{fixed: 'right', title:'操作', toolbar: '#row-bar', width:180}
+            ]]
+        });
+        //头工具栏事件
+        table.on('toolbar(test)', function(obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'multi-delete':
+                    var data = checkStatus.data;
+                    var ids=new Array();
+                    for(var i=0;i<data.length;i++){
+                        ids.push(data[i].id)
+                    }
+                    layer.confirm('真的删除任务么', function (index) {
+                        $.ajax({
+                            url:"deletes",
+                            method:"post",
+                            data:"ids="+ids,
+                            success:function(data){
+                                if(data.status){
+                                    table.reload('test',{});
+                                    layer.close(index);
+                                }else{
+                                    alert(data.result)
+                                }
+                            }
+                        })
+                    });
+                    break;
+            }
+        })
+        //监听行工具事件 test是表格lay-filter的值
+        table.on('tool(test)', function(obj) {
+            var data = obj.data;//当前行的数据
+            //obj.event代表的是触发的事件
+            if (obj.event === 'del') {
+                layer.confirm('真的删除任务么', function (index) {
+                    $.ajax({
+                        url:"delete",
+                        method:"post",
+                        data:"id="+data.id,
+                        success:function(data){
+                            if(data.status){
+                                table.reload('test',{});
+                                layer.close(index);
+                            }else{
+                                alert(data.result)
+                            }
+                        }
+                    })
+                });
+            } else if (obj.event === 'edit') {
+                layer.open({
+                    title:"编辑",
+                    area: ['500px', '300px'],
+                    type: 1,
+                    btn: ['提交', '取消'],//第一个按钮，默认是确认按钮，回调函数是yes，后面的按钮，默认是btnX 其中X代表第几个按钮
+                    yes: function(index, layero){//index是当前打开的layer唯一标识符
+                       $.ajax({
+                           url:"update",
+                           method:"post",
+                           data:$("#script-form").serialize(),
+                           success:function(data){
+                               if(data.status){
+                                   table.reload('test',{});
+                                   layer.close(index);
+                               }else{
+                                   alert(data.result)
+                               }
+                           }
+                       })
+                    },
+                    btn2:function(index, layero){
+                        layer.close(index);
+                    },
+                    content: $('#edit-form').html() //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                    ,success: function(layero, index){
+                        form.val('script-form',data)
+                    }
+                });
+
+            }
+        });
+    });
+</script>
+<script type="text/html" id="edit-form">
+    <form class="layui-form" lay-filter="script-form" style="width: 80%" id="script-form">
+        <input type="hidden" name="id">
+        <div class="layui-form-item">
+            <label class="layui-form-label">脚本名</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" required  lay-verify="required" placeholder="请输入脚本名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">表达式</label>
+            <div class="layui-input-block">
+                <input name="cron" required lay-verify="required" placeholder="请输入cron" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">类名</label>
+            <div class="layui-input-block">
+                <input name="jobClass" readonly required lay-verify="required" placeholder="请输入类的全路径" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </form>
+</script>

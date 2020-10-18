@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.sdk.log.dao.LoginServerLogDAO">
+
+
+    <insert id="insertLog" parameterType="LoginServerLog">
+        insert into LOGIN_SERVER_LOG (USER_ID, SERVER_ID, GAME_ID,PROMOTION_CHANNEL_ID, MAC_ADDRESS, IMEI, IP, UA, CREATED_DATE, ROLE_ID) values
+        (#{userId}, #{serverId}, #{gameId}, #{promotionChannelId}, #{macAddress}, #{imei}, #{ip}, #{ua}, #{createdDate}, #{roleId})
+    </insert>
+</mapper>
+    
